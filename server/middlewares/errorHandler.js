@@ -35,7 +35,7 @@ module.exports = function(err, req, res, next) {
     }
     else if(err.name == 'SAME_EMAIL') {
         error_code = err.name;
-        status = 500;
+        status = 400;
         message = 'Email has registered, please login!';
     }
     

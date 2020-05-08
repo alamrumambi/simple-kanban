@@ -1,8 +1,8 @@
-const { Task } = require('../models');
+const { Task, User } = require('../models');
 
 class taskController {
     static findAll(req, res, next) {
-        Task.findAll({ where: { category: req.params.category }})
+        Task.findAll({ where: { category: req.params.category }, include: [{model: User}]})
             .then(data => {
                 console.log('masuk')
                 res.status(200).json(data);
@@ -46,7 +46,7 @@ class taskController {
 
         Task.update(input, { where: { id } })
             .then(data => {
-                return Todo.findByPk(id)
+                return Task.findByPk(id)
             })
             .then(data => {
                 res.status(200).json(data);
@@ -61,11 +61,11 @@ class taskController {
         const input = {
             category
         }
-        const id = req.params.idCat;
+        const id = req.params.id;
 
         Task.update(input, { where: { id } })
             .then(data => {
-                return Todo.findByPk(id)
+                return Task.findByPk(id)
             })
             .then(data => {
                 res.status(200).json(data);
@@ -81,7 +81,7 @@ class taskController {
         Task.findByPk(id)
             .then(data => {
                 record = data;
-                return Todo.destroy({ where: { id } })
+                return Task.destroy({ where: { id } })
             })
             .then(data => {
                 res.status(200).json(record);

@@ -17,9 +17,9 @@ class userController {
                     return User.create({ fullName, email, password })
                 }
         })
-        // User.create({ fullName, email, password })
             .then(data => {
-                res.status(201).json(data);
+                const {id, fullName, email} = data; 
+                if(data) res.status(201).json({id, fullName, email});
             })
             .catch(err => {
                 next(err);
