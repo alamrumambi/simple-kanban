@@ -11,9 +11,9 @@
         <label v-if="register" for="input-name">Full Name</label>
         <input v-if="register" type="text" placeholder="full name" id="input-name" />
         <label for="input-email">User Email</label>
-        <input type="text" placeholder="user@email.com" id="input-email" />
+        <input type="text" placeholder="user@email.com" id="input-email" v-model="emailText" />
         <label for="input-password">User Password</label>
-        <input type="password" placeholder="password" id="input-password" />
+        <input type="password" placeholder="password" id="input-password" v-model="passwordText" />
         <button type="submit">{{submit}}</button>
         <div class="google">
           <p>-or Sign in with Google-</p>
@@ -32,12 +32,16 @@ export default {
       register: false,
       title: "Login",
       submit: "Login",
-      loginActive: true
+      loginActive: true,
+      emailText: '',
+      passwordText: ''
     };
   },
   methods: {
     login() {
-      this.$emit("loginStatus", true);
+      if(this.title == 'Login') {
+        this.$emit("login", {email: this.emailText, password: this.passwordText});
+      }
     },
     loginForm() {
       this.loginActive = true;

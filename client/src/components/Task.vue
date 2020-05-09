@@ -28,8 +28,8 @@
               <hr />
               <div class="contentInfo">
                 <div class="info">
-                  <p>{{data.email}}</p>
-                  <p>{{data.tanggal}}</p>
+                  <p>{{data.User.email}}</p>
+                  <p>{{data.createDate}}</p>
                 </div>
                 <div class="event">
                   <button v-on:click="showDelForm" class="event-button">
@@ -53,7 +53,7 @@
 
 <script>
 export default {
-  props: ["backlogs"],
+  props: ["data"],
   data() {
     return {
       popForm: false,
@@ -62,19 +62,19 @@ export default {
       categories: [
         {
           name: "Backlog",
-          data: this.backlogs
+          data: this.data
         },
         {
           name: "To-do",
-          data: this.todos
+          data: this.data.todos
         },
         {
           name: "Doing",
-          data: this.doings
+          data: this.data.doing
         },
         {
           name: "Done",
-          data: this.backlogs
+          data: this.data.done
         }
       ]
     };

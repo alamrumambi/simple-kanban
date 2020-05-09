@@ -37,6 +37,7 @@ export default {
       this.addForm = false;
     },
     logout() {
+      localStorage.removeItem('access_token');
       this.$emit('loginStatus', false)
     }
   }

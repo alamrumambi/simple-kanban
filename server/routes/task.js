@@ -3,7 +3,7 @@ const taskController = require('../controllers/taskController');
 const authentication = require('../middlewares/authentication');
 const authorization = require('../middlewares/authorization');
 
-router.get('/:category', authentication, taskController.findAll);
+router.get('/:category',  taskController.findAll);
 router.post('/', authentication, taskController.addData);
 router.get('/edit/:id', authentication, authorization, taskController.findByPk);
 router.put('/edit/:id', authentication, authorization, taskController.putData);

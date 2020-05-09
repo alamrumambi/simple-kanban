@@ -4,7 +4,6 @@ class taskController {
     static findAll(req, res, next) {
         Task.findAll({ where: { category: req.params.category }, include: [{model: User}]})
             .then(data => {
-                console.log('masuk')
                 res.status(200).json(data);
             })
             .catch(err => {
