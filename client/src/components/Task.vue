@@ -62,7 +62,7 @@ export default {
       categories: [
         {
           name: "Backlog",
-          data: this.data
+          data: this.data.backlogs
         },
         {
           name: "To-do",

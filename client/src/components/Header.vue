@@ -11,8 +11,8 @@
       <div id="input-box">
         <div id="title-input">Add Task</div>
         <label for="input-task">Task Name/ Title</label>
-        <input type="text" placeholder="e.g. Create new todos" id="input-task" />
-        <button class="blue-button">Add</button>
+        <input type="text" placeholder="e.g. Create new todos" id="input-task" v-model="titleText" />
+        <button class="blue-button" v-on:click="saveData">Add</button>
         <button class="red-button" v-on:click="cancel">Cancel</button>
       </div>
     </div>
@@ -23,18 +23,22 @@
 <script>
 
 export default {
-  props: ["isLogin"],
+  props: ["isLogin", "addForm"],
   data() {
     return {
-      addForm: false
+      titleText: ''
     }
   },
   methods: {
     addTask() {
-      this.addForm = true;
+      this.$emit('addFormShow', true);
+      this.titleText = '';
+    },
+    saveData() {
+      this.$emit('addTask', {title: this.titleText});
     },
     cancel() {
-      this.addForm = false;
+      this.$emit('addFormShow', false);
     },
     logout() {
       localStorage.removeItem('access_token');
