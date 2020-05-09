@@ -1,20 +1,30 @@
 <template>
   <div class="container">
-    <div v-if="popForm" id="input-data">
-      <div v-if="editForm" id="input-box">
-        <div id="title-input">Edit Task</div>
-        <label for="input-task">Task Name/ Title</label>
-        <input type="text" placeholder="e.g. Create new todos" id="input-task" />
-        <button class="blue-button">Update</button>
-        <button v-on:click="cancel" class="red-button">Cancel</button>
-      </div>
-      <div v-if="deleteForm" id="input-box" style="text-align: center;">
-        <div id="title-input" style="background-color: #f44336">Delete this task?</div>
-        <button class="blue-button">Yes</button>
-        <button v-on:click="cancel" class="red-button">No</button>
-      </div>
-    </div>
     <div class="row">
+      <div v-if="popForm" id="input-data">
+        <div v-if="editForm" id="input-box">
+          <div id="title-input">Edit Task</div>
+          <label for="input-task">Task Name/ Title</label>
+          <input
+            type="text"
+            placeholder="e.g. Create new todos"
+            id="input-task"
+            v-model="titleText"
+          />
+          <button class="blue-button" v-on:click="saveData">Update</button>
+          <button v-on:click="cancel" class="red-button">Cancel</button>
+        </div>
+        <div v-if="deleteForm" id="input-box" style="text-align: center;">
+          <div id="title-input" style="background-color: #f44336">Delete this task?</div>
+          <button class="blue-button" v-on:click="deleteTask">Yes</button>
+          <button v-on:click="cancel" class="red-button">No</button>
+        </div>
+        <div v-if="moveForm" id="input-box" style="text-align: center;">
+          <div id="title-input" style="background-color: #f44336">{{moveAction}} to {{moveText}}?</div>
+          <button class="blue-button" v-on:click="moveTask">Yes</button>
+          <button v-on:click="cancel" class="red-button">No</button>
+        </div>
+      </div>
       <!-- backlog -->
       <div v-for="(category, index) in categories" :key="index" class="col-2 col-s-5 col-t-4 tab">
         <div class="item">
@@ -30,15 +40,19 @@
                 <div class="info">
                   <p>{{data.User.email}}</p>
                   <p>{{data.createDate}}</p>
-                </div>
-                <div class="event">
-                  <button v-on:click="showDelForm" class="event-button">
-                    ❌
-                    <span class="tooltiptext">Delete Task</span>
+                  <button v-if="data.category!=='backlog'" v-on:click="showBackForm(data.id, data.category)" class="event-button">
+                    ↻
                   </button>
-                  <button v-on:click="showEditForm" class="event-button">
-                    ✎  
-                    <span class="tooltiptext">Edit Task</span>
+                </div>
+                <div v-if="!popForm" class="event">
+                  <button v-on:click="showDelForm(data.id)" class="event-button">
+                    ❌
+                  </button>
+                  <button v-on:click="showEditForm(data.id, data.title)" class="event-button">
+                    ✎
+                  </button>
+                  <button v-if="data.category!=='done'" v-on:click="showMoveForm(data.id, data.category)" class="event-button">
+                    ➜
                   </button>
                   <!-- <button>icon</button> -->
                 </div>
@@ -53,10 +67,14 @@
 
 <script>
 export default {
-  props: ["data"],
+  props: ["data", "popForm"],
   data() {
     return {
-      popForm: false,
+      titleText: "",
+      idText: "",
+      moveText: "",
+      moveAction: "",
+      moveForm: false,
       editForm: false,
       deleteForm: false,
       categories: [
@@ -80,16 +98,54 @@ export default {
     };
   },
   methods: {
-    showEditForm() {
-      this.popForm = true;
-      this.editForm = true;
+    saveData() {
+      this.$emit("updateTask", { title: this.titleText, id: this.idText });
     },
-    showDelForm() {
-      this.popForm = true;
+    moveTask() {
+      this.$emit("moveTask", { category: this.moveText, id: this.idText });
+    },
+    showEditForm(id, title) {
+      this.$emit("popFormShow", true);
+      this.editForm = true;
+      this.deleteForm = false;
+      this.moveForm = false;
+      this.idText = id;
+      this.titleText = title;
+    },
+    showDelForm(id) {
+      this.$emit("popFormShow", true);
+      this.idText = id;
       this.deleteForm = true;
+      this.editForm = false;
+      this.moveForm = false;
+    },
+    showMoveForm(id, category) {
+      this.$emit("popFormShow", true);
+      this.idText = id;
+      this.moveAction = 'Move';
+      if(category == 'backlog') this.moveText = 'to-do';
+      else if(category == 'to-do') this.moveText = 'doing';
+      else if(category == 'doing') this.moveText = 'done';
+      this.moveForm = true;
+      this.editForm = false;
+      this.deleteForm = false;
+    },
+    showBackForm(id, category) {
+      this.$emit("popFormShow", true);
+      this.idText = id;
+      this.moveAction = 'Back';
+      if(category == 'to-do') this.moveText = 'backlog';
+      else if(category == 'doing') this.moveText = 'to-do';
+      else if(category == 'done') this.moveText = 'doing';
+      this.moveForm = true;
+      this.editForm = false;
+      this.deleteForm = false;
+    },
+    deleteTask() {
+      this.$emit("deleteTask", this.idText);
     },
     cancel() {
-      this.popForm = false;
+      this.$emit("popFormShow", false);
       this.editForm = false;
       this.deleteForm = false;
     }
@@ -325,7 +381,6 @@ button {
 .red-button {
   background-color: #f44336;
   color: white;
-  
 }
 
 .red-button:hover {
@@ -352,7 +407,7 @@ button {
 
 .tabContent {
   overflow: auto;
-  max-height: 500px;
+  max-height: 1000px;
 }
 
 .content {
@@ -398,13 +453,13 @@ button {
   opacity: 0;
   transition: opacity 1s;
   /* visibility: hidden; */
-  width: 120px;
-  background-color: black;
+  width: 70px;
+  background-color: rgba(0, 0, 0, 0.5);
   color: #fff;
   text-align: center;
   padding: 5px 0;
   border-radius: 6px;
- 
+
   /* Position the tooltip text - see examples below! */
   position: absolute;
   z-index: 1;
@@ -425,5 +480,4 @@ button {
   /* visibility: visible; */
   opacity: 1;
 }
-
 </style>>

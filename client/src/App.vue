@@ -1,8 +1,22 @@
 <template>
   <div class="container">
-    <Header :isLogin="isLogin" :addForm="addForm" @loginStatus="loginStatus" @addFormShow="addFormShow" @addTask="addTask"></Header>
+    <Header
+      :isLogin="isLogin"
+      :addForm="addForm"
+      @loginStatus="loginStatus"
+      @addFormShow="addFormShow"
+      @addTask="addTask"
+    ></Header>
     <Login v-if="!isLogin" :isLogin="isLogin" @login="login"></Login>
-    <Task v-if="isLogin" :data="data"></Task>
+    <Task
+      v-if="isLogin"
+      :data="data"
+      :popForm="popForm"
+      @updateTask="updateTask"
+      @deleteTask="deleteTask"
+      @moveTask="moveTask"
+      @popFormShow="popFormShow"
+    ></Task>
   </div>
 </template>
 
@@ -17,6 +31,7 @@ export default {
     return {
       isLogin: false,
       addForm: false,
+      popForm: false,
       data: {
         backlogs: [],
         todos: [],
@@ -26,7 +41,7 @@ export default {
     };
   },
   created() {
-    if(localStorage.getItem('access_token')) {
+    if (localStorage.getItem("access_token")) {
       this.showData();
       this.isLogin = true;
     }
@@ -42,6 +57,10 @@ export default {
       this.addForm = value;
     },
 
+    popFormShow(value) {
+      this.popForm = value;
+    },
+
     //after logout
     loginStatus(value) {
       this.isLogin = value;
@@ -55,14 +74,19 @@ export default {
         axios({
           method: "GET",
           url: `http://localhost:3000/tasks/${category[cat]}`,
-          headers: {access_token: localStorage.getItem('access_token')}
+          headers: { access_token: localStorage.getItem("access_token") }
         })
           .then(res => {
             for (let i in res.data) {
-              if(category[cat] == 'backlog') this.data.backlogs.push(res.data[i]); //respon dari rest api dimasukan ke users
-              else if(category[cat] == 'to-do') this.data.todos.push(res.data[i]);
-              else if(category[cat] == 'doing') this.data.doing.push(res.data[i]);
-              else if(category[cat] == 'done') this.data.done.push(res.data[i]);
+              if (category[cat] == "backlog")
+                this.data.backlogs.push(res.data[i]);
+              //respon dari rest api dimasukan ke users
+              else if (category[cat] == "to-do")
+                this.data.todos.push(res.data[i]);
+              else if (category[cat] == "doing")
+                this.data.doing.push(res.data[i]);
+              else if (category[cat] == "done")
+                this.data.done.push(res.data[i]);
             }
           })
           .catch(err => {
@@ -90,31 +114,98 @@ export default {
 
     //add new task
     addTask(body) {
-      const {title} = body;
+      const { title } = body;
 
       axios({
         method: "POST",
         url: "http://localhost:3000/tasks",
-        data: {title},
-        headers: {access_token: localStorage.getItem('access_token')}
+        data: { title },
+        headers: { access_token: localStorage.getItem("access_token") }
       })
-      .then(res => {
-        location.reload();
+        .then(res => {
+          this.data.backlogs.length = 0;
+          this.data.todos.length = 0;
+          this.data.doing.length = 0;
+          this.data.done.length = 0;
+          this.showData();
+          this.addForm = false;
+        })
+        .catch(err => {
+          console.log(err);
+          this.addForm = true;
+        });
+    },
+
+    //update task
+    updateTask(body) {
+      const { title, id } = body;
+      axios({
+        method: "PUT",
+        url: `http://localhost:3000/tasks/edit/${id}`,
+        data: { title },
+        headers: { access_token: localStorage.getItem("access_token") }
       })
-      .catch(err => {
-        console.log(err);
-        this.addForm = true;
+        .then(res => {
+          this.data.backlogs.length = 0;
+          this.data.todos.length = 0;
+          this.data.doing.length = 0;
+          this.data.done.length = 0;
+          this.showData();
+          this.popForm = false;
+        })
+        .catch(err => {
+          console.log(err);
+          this.popForm = true;
+        });
+    },
+
+    //delete task
+    deleteTask(id) {
+      axios({
+        method: "DELETE",
+        url: `http://localhost:3000/tasks/${id}`,
+        headers: { access_token: localStorage.getItem("access_token") }
       })
+        .then(res => {
+          this.data.backlogs.length = 0;
+          this.data.todos.length = 0;
+          this.data.doing.length = 0;
+          this.data.done.length = 0;
+          this.showData();
+          this.popForm = false;
+        })
+        .catch(err => {
+          console.log(err);
+          this.popForm = true;
+        });
+    },
+
+    //move task
+    moveTask(body) {
+      const { category, id } = body;
+      axios({
+        method: "PUT",
+        url: `http://localhost:3000/tasks/edit-category/${id}`,
+        data: { category },
+        headers: { access_token: localStorage.getItem("access_token") }
+      })
+        .then(res => {
+          this.data.backlogs.length = 0;
+          this.data.todos.length = 0;
+          this.data.doing.length = 0;
+          this.data.done.length = 0;
+          this.showData();
+          this.popForm = false;
+        })
+        .catch(err => {
+          console.log(err);
+          this.popForm = true;
+        });
     }
   }
 };
 </script>
 
 <style scoped>
-h1 {
-  background-color: gray;
-  padding: 10px;
-  color: aliceblue;
-}
 </style>>
 

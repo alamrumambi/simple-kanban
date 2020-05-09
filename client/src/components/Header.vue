@@ -1,12 +1,6 @@
 <template>
   <div>
     <div class="container">
-      <a href="#" type="button">KANBAN</a>
-      <div v-if="isLogin" id="nav">
-        <button id="addTask" v-on:click="addTask">Add New Task</button> &nbsp;
-        <button type="button" class="red-button" v-on:click="logout">Logout</button>
-      </div>
-    </div>
     <div v-if="addForm" id="input-data">
       <div id="input-box">
         <div id="title-input">Add Task</div>
@@ -14,6 +8,12 @@
         <input type="text" placeholder="e.g. Create new todos" id="input-task" v-model="titleText" />
         <button class="blue-button" v-on:click="saveData">Add</button>
         <button class="red-button" v-on:click="cancel">Cancel</button>
+      </div>
+    </div>
+      <a href="#" type="button">KANBAN</a>
+      <div v-if="isLogin" id="nav">
+        <button id="addTask" v-on:click="addTask">Add New Task</button> &nbsp;
+        <button type="button" class="red-button" v-on:click="logout">Logout</button>
       </div>
     </div>
   </div>
