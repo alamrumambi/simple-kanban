@@ -15,7 +15,8 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     hooks: {
       beforeCreate: (instance) => {
-        instance.category = 'backlog'
+        instance.category = 'backlog';
+        instance.createDate = instance.createdAt;
       }
     }
   });

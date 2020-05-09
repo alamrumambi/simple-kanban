@@ -9,7 +9,13 @@
       <form @submit.prevent="login">
         <h1>{{title}}</h1>
         <label v-if="register" for="input-name">Full Name</label>
-        <input v-if="register" type="text" placeholder="full name" id="input-name" />
+        <input
+          v-if="register"
+          type="text"
+          placeholder="full name"
+          id="input-name"
+          v-model="fullNameText"
+        />
         <label for="input-email">User Email</label>
         <input type="text" placeholder="user@email.com" id="input-email" v-model="emailText" />
         <label for="input-password">User Password</label>
@@ -17,7 +23,11 @@
         <button type="submit">{{submit}}</button>
         <div class="google">
           <p>-or Sign in with Google-</p>
-          <div class="g-signin2" data-onsuccess="onSignIn"></div>
+          <GoogleLogin
+            :params="params"
+            :renderParams="renderParams"
+            :onSuccess="onSuccess"
+          ></GoogleLogin>
         </div>
       </form>
     </div>
@@ -25,6 +35,8 @@
 </template>
 
 <script>
+import GoogleLogin from "vue-google-login";
+
 export default {
   props: ["isLogin"],
   data() {
@@ -33,16 +45,45 @@ export default {
       title: "Login",
       submit: "Login",
       loginActive: true,
-      emailText: '',
-      passwordText: ''
+      emailText: "",
+      passwordText: "",
+      fullNameText: "",
+      params: {
+        clientId:
+          "193359553146-vuev0t0g4batnp58od0cf2jg95jdnn42.apps.googleusercontent.com"
+      },
+      renderParams: {
+        width: 250,
+        height: 50,
+        longtitle: true
+      }
     };
+  },
+  components: {
+    GoogleLogin
   },
   methods: {
     login() {
-      if(this.title == 'Login') {
-        this.$emit("login", {email: this.emailText, password: this.passwordText});
+      if (this.title == "Login") {
+        this.$emit("login", {
+          email: this.emailText,
+          password: this.passwordText
+        });
+      } else {
+        this.$emit("register", {
+          fullName: this.fullNameText,
+          email: this.emailText,
+          password: this.passwordText
+        });
       }
     },
+
+    onSuccess(googleUser) {
+      console.log("sampai ke login");
+      var id_token = googleUser.getAuthResponse().id_token;
+      this.$emit("googleSign", id_token);
+    },
+
     loginForm() {
       this.loginActive = true;
       this.title = "Login";
@@ -60,6 +101,16 @@ export default {
 </script>
 
 <style scoped>
+.g-signin-button {
+  /* This is where you control how the button looks. Be creative! */
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 3px;
+  background-color: #3c82f7;
+  color: #fff;
+  box-shadow: 0 3px 0 #0f69ff;
+}
+
 .container {
   width: 100%;
   height: 100%;

@@ -119,20 +119,16 @@ Response:
 ```json
 [
      {
-        "id": 2,
-        "title": "making server kanban part 2",
+        "id": 12,
+        "title": "Finishing Kanban",
         "createDate": "2020-05-09",
         "category": "backlog",
         "UserId": 5,
-        "createdAt": "2020-05-08T17:25:08.225Z",
-        "updatedAt": "2020-05-08T17:25:08.225Z",
+        "createdAt": "2020-05-09T09:45:20.535Z",
+        "updatedAt": "2020-05-09T18:01:06.350Z",
         "User": {
-            "id": 5,
-            "fullName": "alam",
             "email": "alam@email.com",
-            "password": "$2b$04$FMD2fvPR3lJhMhHKGoX5V.wmhQOzRiKzvARqfzJVO4TEQdFL6Biym",
-            "createdAt": "2020-05-08T17:15:18.979Z",
-            "updatedAt": "2020-05-08T17:15:18.979Z"
+            "fullName": "alam"
         }
     },{
       ...
@@ -149,8 +145,7 @@ Request:
 
 ```json
 {
-  "title": "string",
-  "createDate": "dateonly"
+  "title": "string"
 }
 ```
 

@@ -2,7 +2,7 @@ const { Task, User } = require('../models');
 
 class taskController {
     static findAll(req, res, next) {
-        Task.findAll({ where: { category: req.params.category }, include: [{model: User}]})
+        Task.findAll({order: [['createdAt']], where: {category: req.params.category }, include: [{model: User, attributes: ['email', 'fullName']}]})
             .then(data => {
                 res.status(200).json(data);
             })

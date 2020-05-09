@@ -7,15 +7,23 @@
       @addFormShow="addFormShow"
       @addTask="addTask"
     ></Header>
-    <Login v-if="!isLogin" :isLogin="isLogin" @login="login"></Login>
+    <Login
+      v-if="!isLogin"
+      :isLogin="isLogin"
+      @login="login"
+      @register="register"
+      @googleSign="googleSign"
+    ></Login>
     <Task
       v-if="isLogin"
       :data="data"
       :popForm="popForm"
+      :authForm="authForm"
       @updateTask="updateTask"
       @deleteTask="deleteTask"
       @moveTask="moveTask"
       @popFormShow="popFormShow"
+      @authFormShow="authFormShow"
     ></Task>
   </div>
 </template>
@@ -32,6 +40,7 @@ export default {
       isLogin: false,
       addForm: false,
       popForm: false,
+      authForm: false,
       data: {
         backlogs: [],
         todos: [],
@@ -61,9 +70,14 @@ export default {
       this.popForm = value;
     },
 
+    authFormShow(value) {
+      this.authForm = value;
+    },
+
     //after logout
     loginStatus(value) {
       this.isLogin = value;
+      location.reload();
     },
 
     //show all tasks
@@ -112,6 +126,39 @@ export default {
         });
     },
 
+    // register
+    register(body) {
+      axios({
+        method: "POST",
+        url: "http://localhost:3000/users/register",
+        data: body
+      })
+        .then(response => {
+          location.reload();
+        })
+        .catch(error => {
+          console.log(error);
+        });
+    },
+
+    //google sign in
+    googleSign(id_token) {
+      console.log('sampai ke app');
+      axios({
+        method: "POST",
+        url: "http://localhost:3000/users/google-signin",
+        data: { id_token: id_token }
+      })
+        .then(res => {
+          localStorage.setItem("access_token", res.data.access_token);
+          this.showData();
+          this.isLogin = true;
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    },
+
     //add new task
     addTask(body) {
       const { title } = body;
@@ -155,6 +202,7 @@ export default {
         })
         .catch(err => {
           console.log(err);
+          this.authForm = true;
           this.popForm = true;
         });
     },
@@ -176,6 +224,7 @@ export default {
         })
         .catch(err => {
           console.log(err);
+          this.authForm = true;
           this.popForm = true;
         });
     },
@@ -199,6 +248,7 @@ export default {
         })
         .catch(err => {
           console.log(err);
+          this.authForm = true;
           this.popForm = true;
         });
     }

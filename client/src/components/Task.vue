@@ -24,6 +24,10 @@
           <button class="blue-button" v-on:click="moveTask">Yes</button>
           <button v-on:click="cancel" class="red-button">No</button>
         </div>
+        <div v-if="authForm" id="input-box" style="text-align: center;">
+          <div id="title-input" style="background-color: #f44336">Only Working for your tasks</div>
+          <button v-on:click="cancel" class="red-button">Close</button>
+        </div>
       </div>
       <!-- backlog -->
       <div v-for="(category, index) in categories" :key="index" class="col-2 col-s-5 col-t-4 tab">
@@ -67,7 +71,7 @@
 
 <script>
 export default {
-  props: ["data", "popForm"],
+  props: ["data", "popForm", "authForm"],
   data() {
     return {
       titleText: "",
@@ -146,8 +150,10 @@ export default {
     },
     cancel() {
       this.$emit("popFormShow", false);
+      this.$emit("authFormShow", false);
       this.editForm = false;
       this.deleteForm = false;
+      this.moveForm = false;
     }
   }
 };
