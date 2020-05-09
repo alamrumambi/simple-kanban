@@ -17,9 +17,9 @@
           v-model="fullNameText"
         />
         <label for="input-email">User Email</label>
-        <input type="text" placeholder="user@email.com" id="input-email" v-model="emailText" />
+        <input type="text" placeholder="for try: user@email.com" id="input-email" v-model="emailText" />
         <label for="input-password">User Password</label>
-        <input type="password" placeholder="password" id="input-password" v-model="passwordText" />
+        <input type="password" placeholder="for try: 12345" id="input-password" v-model="passwordText" />
         <button type="submit">{{submit}}</button>
         <div class="google">
           <p>-or Sign in with Google-</p>
