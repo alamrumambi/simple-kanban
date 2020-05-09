@@ -1,15 +1,20 @@
 <template>
   <div>
     <div class="container">
-    <div v-if="addForm" id="input-data">
-      <div id="input-box">
-        <div id="title-input">Add Task</div>
-        <label for="input-task">Task Name/ Title</label>
-        <input type="text" placeholder="e.g. Create new todos" id="input-task" v-model="titleText" />
-        <button class="blue-button" v-on:click="saveData">Add</button>
-        <button class="red-button" v-on:click="cancel">Cancel</button>
+      <div v-if="addForm" id="input-data">
+        <div id="input-box">
+          <div id="title-input">Add Task</div>
+          <label for="input-task">Task Name/ Title</label>
+          <input
+            type="text"
+            placeholder="e.g. Create new todos"
+            id="input-task"
+            v-model="titleText"
+          />
+          <button class="blue-button" v-on:click="saveData">Add</button>
+          <button class="red-button" v-on:click="cancel">Cancel</button>
+        </div>
       </div>
-    </div>
       <a href="#" type="button">KANBAN</a>
       <div v-if="isLogin" id="nav">
         <button id="addTask" v-on:click="addTask">Add New Task</button> &nbsp;
@@ -21,28 +26,27 @@
 
 
 <script>
-
 export default {
   props: ["isLogin", "addForm"],
   data() {
     return {
-      titleText: ''
-    }
+      titleText: ""
+    };
   },
   methods: {
     addTask() {
-      this.$emit('addFormShow', true);
-      this.titleText = '';
+      this.$emit("addFormShow", true);
+      this.titleText = "";
     },
     saveData() {
-      this.$emit('addTask', {title: this.titleText});
+      this.$emit("addTask", { title: this.titleText });
     },
     cancel() {
-      this.$emit('addFormShow', false);
+      this.$emit("addFormShow", false);
     },
     logout() {
-      localStorage.removeItem('access_token');
-      this.$emit('loginStatus', false)
+      localStorage.removeItem("access_token");
+      this.$emit("loginStatus", false);
     }
   }
 };
