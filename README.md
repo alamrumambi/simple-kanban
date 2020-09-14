@@ -1,5 +1,10 @@
-# kanban-server
-Creating fancy kanban
+# Simple-Kanban
+The api server is built using node js and the express.js framework.
+Then this api also supports authentication and authorization using the json web token package and google OAuth.
+And for the client site is SPA web built using Vue Js.
+Client site can be seen at https://kanban-alam.web.app/
+
+The documentation of API
 ​
 List of available endpoints:
 ​
